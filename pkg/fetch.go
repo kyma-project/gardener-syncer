@@ -21,14 +21,26 @@ type FetchSeedsOpts struct {
 func BuildFetchSeedFn(opts FetchSeedsOpts) FetchSeeds {
 	return func() (types.Providers, error) {
 		ctx, cancel := context.WithTimeout(context.Background(), opts.Timeout)
-		defer logWithDuration(time.Now())
+		defer LogWithDuration(time.Now(), "fetching gardener data complete")
 		defer cancel()
 
-		var seeds gardener_types.SeedList
-		if err := opts.List(ctx, &seeds); err != nil {
+		seeds, err := listSeeds(ctx, opts.List)
+		if err != nil {
 			return nil, err
 		}
 
 		return ToProviderRegions(seeds.Items), nil
 	}
+}
+
+func listSeeds(ctx context.Context, list List) (seeds gardener_types.SeedList, err error) {
+	defer func() {
+		LogWithDuration(time.Now(), "gardener-seed list complete", "count", len(seeds.Items))
+	}()
+
+	if err = list(ctx, &seeds); err != nil {
+		return gardener_types.SeedList{}, err
+	}
+
+	return seeds, nil
 }

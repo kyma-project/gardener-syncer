@@ -1,8 +1,9 @@
 package client
 
 import (
-	"log/slog"
+	"time"
 
+	seeker "github.com/kyma-project/gardener-syncer/pkg"
 	"github.com/kyma-project/infrastructure-manager/pkg/gardener"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
@@ -15,7 +16,8 @@ type Options struct {
 	AdditionalAddToSchema []func(*runtime.Scheme) error
 }
 
-func New(opt Options) (k8sClient client.Client, err error) {
+func New(opt Options, name string) (k8sClient client.Client, err error) {
+	defer seeker.LogWithDuration(time.Now(), "client created", "name", name)
 
 	scheme := runtime.NewScheme()
 	for _, register := range opt.AdditionalAddToSchema {
@@ -23,8 +25,6 @@ func New(opt Options) (k8sClient client.Client, err error) {
 			return nil, err
 		}
 	}
-
-	slog.Info("schema registered")
 
 	getRestConfig := config.GetConfig
 	if opt.KubeconfigPath != "" {

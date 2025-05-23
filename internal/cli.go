@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"log/slog"
+	log "log/slog"
 	"time"
 
 	"github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -12,20 +13,30 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
-var defaultKcpClientTimeout = time.Second * 10
+var (
+	defaultKcpClientTimeout = time.Second * 10
+	logLevelMapping         = map[string]log.Level{
+		"INFO":  log.LevelInfo,
+		"DEBUG": log.LevelDebug,
+	}
+)
 
 func Run() error {
+	defer seeker.LogWithDuration(time.Now(), "application finished")
+
 	cfg, err := NewConfigFromFlags()
 	if err != nil {
 		return err
 	}
-	slog.Info("application started")
+
+	logLevel := mustParseLogLevel(cfg.LogLevel)
+	slog.SetLogLoggerLevel(logLevel)
 
 	kcpClient, err := client.New(client.Options{
 		AdditionalAddToSchema: []func(*runtime.Scheme) error{
 			corev1.AddToScheme,
 		},
-	})
+	}, "kcp")
 
 	if err != nil {
 		return err
@@ -46,6 +57,7 @@ func Run() error {
 				v1beta1.AddToScheme,
 			},
 		},
+		"gardener",
 	)
 
 	if err != nil {
@@ -68,4 +80,12 @@ func mustParseDuration(s string) time.Duration {
 		panic(fmt.Sprintf("invalid duration value: %s", s))
 	}
 	return out
+}
+
+func mustParseLogLevel(s string) log.Level {
+	level, found := logLevelMapping[s]
+	if !found {
+		panic(fmt.Sprintf("invalid log level: %s", s))
+	}
+	return level
 }

@@ -28,20 +28,19 @@ type StoreOpts struct {
 	Convert[types.Providers, map[string]string]
 }
 
-func logWithDuration(startTime time.Time) {
+func LogWithDuration(startTime time.Time, msg string, args ...any) {
 	duration := time.Now().Sub(startTime)
-	log.With("duration", duration).Info("done")
+	log.With(args...).With("duration", duration).Info(msg)
 }
 
 func BuildStoreFn(opts StoreOpts) Store {
 	return func(data types.Providers) (err error) {
 		ctx, cancel := context.WithTimeout(context.Background(), opts.Timeout)
 		defer cancel()
+		defer LogWithDuration(time.Now(), "storing data complete", "key", opts.Key)
 
 		var cm corev1.ConfigMap
 		fetch := func() error {
-			log.With("config-map", opts.Key).Info("fetching")
-			defer logWithDuration(time.Now())
 			return opts.Get(ctx, opts.Key, &cm)
 		}
 

@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if err := cli.Run(); err != nil {
-		log.Error(err.Error())
+		log.Error("application failed", "error", err.Error())
 		os.Exit(1)
 	}
 }
