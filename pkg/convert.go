@@ -3,6 +3,7 @@ package seeker
 import (
 	"log/slog"
 	"strings"
+	"time"
 
 	"sigs.k8s.io/yaml"
 
@@ -30,22 +31,38 @@ func verifySeedReadiness(seed *gardener_types.Seed) bool {
 }
 
 func seedCanBeUsed(seed *gardener_types.Seed) bool {
-	return seed.DeletionTimestamp == nil && seed.Spec.Settings.Scheduling.Visible && verifySeedReadiness(seed)
+	isDeletionTimesampt := seed.DeletionTimestamp == nil
+	isReady := verifySeedReadiness(seed)
+	isVisible := seed.Spec.Settings != nil &&
+		seed.Spec.Settings.Scheduling != nil &&
+		seed.Spec.Settings.Scheduling.Visible
+
+	result := isDeletionTimesampt && seed.Spec.Settings.Scheduling.Visible && isReady
+	if !result {
+		slog.Debug("seed rejected",
+			"name", seed.Name,
+			"isDeletionTimestamp", isDeletionTimesampt,
+			"isVisible", isVisible,
+			"isReady", isReady)
+	}
+	return result
 }
 
-func ToProviderRegions(seeds []gardener_types.Seed) types.Providers {
-	result := types.Providers{}
+func ToProviderRegions(seeds []gardener_types.Seed) (out types.Providers) {
+	defer LogWithDuration(time.Now(), "conversion complete")
+
+	out = types.Providers{}
 	for _, seed := range seeds {
-		slog.Debug("checking seed", "seedName", seed.Name)
 		if seedCanBeUsed(&seed) {
-			result.Add(
+			out.Add(
 				seed.Spec.Provider.Type,
 				seed.Spec.Provider.Region,
 			)
+			continue
 		}
 	}
 
-	return result
+	return out
 }
 
 func ToConfigMap(providerRegions types.Providers) (map[string]string, error) {

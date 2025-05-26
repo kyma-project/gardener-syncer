@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -18,6 +19,7 @@ type Gardener struct {
 
 type Config struct {
 	Gardener Gardener
+	LogLevel string
 }
 
 func (c *Config) seedMapKey() client.ObjectKey {
@@ -47,6 +49,11 @@ func isValidDuration(s string) bool {
 	return err == nil
 }
 
+func isValidLogLevel(s string) bool {
+	_, found := logLevelMapping[s]
+	return found
+}
+
 func (c *Config) Validate() error {
 	for _, item := range []struct {
 		fieldValues []string
@@ -65,6 +72,12 @@ func (c *Config) Validate() error {
 				c.Gardener.Timeout,
 			},
 			validators: []func(string) bool{isValidDuration},
+		},
+		{
+			fieldValues: []string{
+				c.LogLevel,
+			},
+			validators: []func(string) bool{isValidLogLevel},
 		},
 	} {
 		for _, isValid := range item.validators {
@@ -88,7 +101,17 @@ const (
 	FlagDefaultGardenerSeedConfigMapName      = "gardener-seeds-cache"
 	FlagDefaultGardenerSeedConfigMapNamespace = "kcp-system"
 	FlagDefaultGardenerTimeout                = "10s"
+	FlagNameLogLevel                          = "log-level"
+	FlagDefaultLogLevel                       = "INFO"
 )
+
+func logLevelMappingKeys() []string {
+	out := make([]string, 0, len(logLevelMapping))
+	for key := range logLevelMapping {
+		out = append(out, key)
+	}
+	return out
+}
 
 func NewConfigFromFlags() (Config, error) {
 	out := Config{}
@@ -97,6 +120,7 @@ func NewConfigFromFlags() (Config, error) {
 	flag.StringVar(&out.Gardener.SeedMapName, FlagNameGardenerSeedConfigMapName, FlagDefaultGardenerSeedConfigMapName, "The name of the config-map that will store gardener seeds.")
 	flag.StringVar(&out.Gardener.SeedMapNamespace, FlagNameGardenerSeedConfigMapNamespace, FlagDefaultGardenerSeedConfigMapNamespace, "The namespace of the config-map that will store gardener seeds.")
 	flag.StringVar(&out.Gardener.Timeout, FlagNameGardenerTimeout, FlagDefaultGardenerTimeout, "Gardener client timeout duration.")
+	flag.StringVar(&out.LogLevel, FlagNameLogLevel, FlagDefaultLogLevel, fmt.Sprintf("One of: %s", strings.Join(logLevelMappingKeys(), ",")))
 
 	flag.Parse()
 

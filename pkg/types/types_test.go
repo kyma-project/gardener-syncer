@@ -14,7 +14,6 @@ var (
 )
 
 func TestProviderRegionSeed_Add(t *testing.T) {
-
 	type data struct {
 		provider string
 		region   string
@@ -38,6 +37,18 @@ func TestProviderRegionSeed_Add(t *testing.T) {
 			initial: types.Providers{
 				testProviderName: {
 					SeedRegions: []string{"some-other-test-seed"},
+				},
+			},
+			data: data{
+				provider: testProviderName,
+				region:   testRegionName,
+			},
+		},
+		{
+			name: "duplicated",
+			initial: types.Providers{
+				testProviderName: {
+					SeedRegions: []string{testRegionName},
 				},
 			},
 			data: data{
