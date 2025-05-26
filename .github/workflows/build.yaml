@@ -1,23 +1,29 @@
-name: Build Cleanup Job
+name: Build Gardener Syncer Job
 
 on:
   push:
     branches:
       - main
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+      - "[0-9]+.[0-9]+.[0-9]+-*"
     paths-ignore:
+      - .reuse
       - "**/*.md"
+      - .gitignore
       - "CODEOWNERS"
       - "LICENSE"
-      - "OWNERS"
-      - "OWNER_ALIASES"
+      - "LICENSES/"
+
   pull_request_target:
-    types: [opened, synchronize]
+    types: [opened, synchronize, reopened]
     paths-ignore:
+      - .reuse
+      - .gitignore
       - "**/*.md"
       - "CODEOWNERS"
       - "LICENSE"
-      - "OWNERS"
-      - "OWNER_ALIASES"
+      - "LICENSES/"
 
 permissions:
   id-token: write # This is required for requesting the JWT token
@@ -29,6 +35,7 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     outputs:
+      tag: ${{ steps.tag.outputs.tag }}
       latest: ${{ steps.latest.outputs.latest || '' }}
     steps:
       - name: Checkout code
@@ -36,6 +43,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - id: tag
+        if: github.event_name == 'push' && github.ref_type == 'tag'
+        run: echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
       - id: latest
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && github.event_name == 'push'
         run: echo "latest=latest" >> $GITHUB_OUTPUT
@@ -46,9 +56,9 @@ jobs:
     with:
       name: gardener-syncer
       dockerfile: Dockerfile
-      context: ./
-      export-tags: false
+      context: .
       tags: |
+        ${{ needs.setup.outputs.tag }}
         ${{ needs.setup.outputs.latest }}
 
   summary:
