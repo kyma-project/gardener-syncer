@@ -1,43 +1,75 @@
-> **NOTE:** This is a general template that you can use for a project README.md. Except for the mandatory sections, use only those sections that suit your use case but keep the proposed section order.
->
-> Mandatory sections: 
-> - `Overview`
-> - `Prerequisites`, if there are any requirements regarding hard- or software
-> - `Installation`
-> - `Contributing` - do not change this!
-> - `Code of Conduct` - do not change this!
-> - `Licensing` - do not change this!
+# Gardener Syncer Job
 
-# {Project Title}
-<!--- mandatory --->
-> Modify the title and insert the name of your project. Use Heading 1 (H1).
 
 ## Overview
-<!--- mandatory section --->
 
-> Provide a description of the project's functionality.
->
-> If it is an example README.md, describe what the example illustrates.
+Cronjob which is regularly synchronizing the Seed-data from Gardener System to Kyma Control Plane.
+The fetched Gardener Seed data for available cloud providers regions is stored inside a ConfigMap.
 
 ## Prerequisites
 
-> List the requirements to run the project or example.
+- Gardener Syncer Job is running in the Kyma Control Plane.
+- Gardener Syncer Job is configured to connect to the Gardener System with kubeconfig file. 
 
 ## Installation
 
-> Explain the steps to install your project. If there are multiple installation options, mention the recommended one and include others in a separate document. Create an ordered list for each installation task.
->
-> If it is an example README.md, describe how to build, run locally, and deploy the example. Format the example as code blocks and specify the language, highlighting where possible. Explain how you can validate that the example ran successfully. For example, define the expected output or commands to run which check a successful deployment.
->
-> Add subsections (H3) for better readability.
+The Gardener Syncer Job is installed and run as an ArgoCD application in the Kyma Control Plane.
+
+### Program arguments:
+* **gardener-timeout** - Timeout of the Gardener API call, default is 5 seconds
+* **gardener-kubeconfig-path** - Path to the kubeconfig file for the Gardener API mounted inside the container, default is `/gardener/kubeconfig/kubeconfig`
+* **gardener-seed-map-name** - Name of the ConfigMap where the Seed data will be stored, default is `gardener-seeds-cache`
+* **gardener-seed-map-namespace** - Namespace of the ConfigMap where the Seed data will be stored, default is `kcp-system`
+* **log-level** - Logging level, possible values are `INFO`, `DEBUG`, default is `INFO`
+
 
 ## Usage
 
-> Explain how to use the project. You can create multiple subsections (H3). Include the instructions or provide links to the related documentation.
+The Gardener Syncer Job runs periodically and fetches the current Seed data from the Gardener System. \
+The fetched data is stored in a ConfigMap named `gardener-seeds-cache` in the `kcp-system` namespace. 
 
-## Development
+The seed information, grouped as regions for all available cloud providers, is stored in the config map structured as follows:
 
-> Add instructions on how to develop the project or example. It must be clear what to do and, for example, how to trigger the tests so that other contributors know how to make their pull requests acceptable. Include the instructions or provide links to related documentation.
+
+```yaml
+apiVersion: v1
+data:
+  alicloud: |-
+    seedRegions:
+    - eu-central-1
+  aws: |-
+    seedRegions:
+    - eu-west-1
+    - eu-central-1
+    - us-east-1
+  azure: |-
+    seedRegions:
+    - westeurope
+    - northeurope
+    - westus2
+    - eastus
+    - eastus2
+  gcp: |-
+    seedRegions:
+    - europe-west1
+    - us-central1
+  openstack: |-
+    seedRegions:
+    - eu-de-1
+kind: ConfigMap
+metadata:
+  name: gardener-seeds-cache
+  namespace: kcp-system
+```
+
+You can check the status of the job by looking at the logs of the CronJob in the Kyma Control Plane. The job will log any errors encountered during the synchronization process.
+You can also manually trigger the job by running the following command:
+
+```bash 
+kubectl create job --from=cronjob/gardener-syncer-job gardener-syncer-job-manual --namespace kcp-system
+```
+
+Finally, the list of regions with exiting seed information for each cloud provider is available for all interested KCP services like Kyma Infrastructure Manager (KIM) or Kyma Environment Broker (KEB)
 
 ## Contributing
 <!--- mandatory section - do not change this! --->
