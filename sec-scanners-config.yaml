@@ -1,4 +1,4 @@
-module-name: kim-snatch
+module-name: gardener-syncer
 kind: kyma
 bdba:
   - europe-docker.pkg.dev/kyma-project/prod/gardener-syncer:latest
