@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log/slog"
 	log "log/slog"
+	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -23,6 +25,7 @@ var (
 
 func Run() error {
 	defer seeker.LogWithDuration(time.Now(), "application finished")
+	defer haltIstioSidecar()
 
 	cfg, err := NewConfigFromFlags()
 	if err != nil {
@@ -88,4 +91,19 @@ func mustParseLogLevel(s string) log.Level {
 		panic(fmt.Sprintf("invalid log level: %s", s))
 	}
 	return level
+}
+
+func haltIstioSidecar() {
+	log.Info("# HALT ISTIO SIDECAR #")
+	resp, err := http.PostForm("http://127.0.0.1:15020/quitquitquit", url.Values{})
+
+	if err != nil {
+		log.Error("unable to send post request to quit Istio sidecar", "error", err)
+		return
+	}
+
+	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
+		log.Info("Stopping istio sidecar, ", "response status", resp.StatusCode)
+		return
+	}
 }
