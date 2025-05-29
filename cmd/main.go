@@ -10,26 +10,9 @@ import (
 )
 
 func main() {
-	defer haltIstioSidecar()
-
 	if err := cli.Run(); err != nil {
 		log.Error("application failed", "error", err.Error())
 		haltIstioSidecar() // os.Exit is not called in defer, so we need to call it here as well
 		os.Exit(1)
-	}
-}
-
-func haltIstioSidecar() {
-	log.Info("# HALT ISTIO SIDECAR #")
-	resp, err := http.PostForm("http://127.0.0.1:15020/quitquitquit", url.Values{})
-
-	if err != nil {
-		log.Error("unable to send post request to quit Istio sidecar", "error", err)
-		return
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
-		log.Info("Stopping istio sidecar, ", "response status", resp.StatusCode)
-		return
 	}
 }
