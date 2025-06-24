@@ -72,7 +72,7 @@ var (
 	}
 	testSeedNoSeedBackupBucketsReady = gardener_types.Seed{
 		Spec: gardener_types.SeedSpec{
-			Backup: &gardener_types.SeedBackup{},
+			Backup: &gardener_types.Backup{},
 			Settings: &gardener_types.SeedSettings{
 				Scheduling: &gardener_types.SeedSettingScheduling{
 					Visible: true,
@@ -91,7 +91,7 @@ var (
 	}
 	testSeedSeedBackupBucketsReadyFalse = gardener_types.Seed{
 		Spec: gardener_types.SeedSpec{
-			Backup: &gardener_types.SeedBackup{},
+			Backup: &gardener_types.Backup{},
 			Settings: &gardener_types.SeedSettings{
 				Scheduling: &gardener_types.SeedSettingScheduling{
 					Visible: true,
@@ -168,7 +168,7 @@ var (
 				Type:   testProviderType2,
 				Region: testRegion2,
 			},
-			Backup: &gardener_types.SeedBackup{},
+			Backup: &gardener_types.Backup{},
 			Settings: &gardener_types.SeedSettings{
 				Scheduling: &gardener_types.SeedSettingScheduling{
 					Visible: true,
