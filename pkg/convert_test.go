@@ -15,6 +15,7 @@ var (
 	testProviderType2 = "test-provider-type2"
 	testRegion1       = "test-region1"
 	testRegion2       = "test-region2"
+	testRegion3       = "test-region3"
 
 	testSeedInDeletion = gardener_types.Seed{
 		ObjectMeta: metav1.ObjectMeta{
@@ -71,7 +72,7 @@ var (
 	}
 	testSeedNoSeedBackupBucketsReady = gardener_types.Seed{
 		Spec: gardener_types.SeedSpec{
-			Backup: &gardener_types.SeedBackup{},
+			Backup: &gardener_types.Backup{},
 			Settings: &gardener_types.SeedSettings{
 				Scheduling: &gardener_types.SeedSettingScheduling{
 					Visible: true,
@@ -90,7 +91,7 @@ var (
 	}
 	testSeedSeedBackupBucketsReadyFalse = gardener_types.Seed{
 		Spec: gardener_types.SeedSpec{
-			Backup: &gardener_types.SeedBackup{},
+			Backup: &gardener_types.Backup{},
 			Settings: &gardener_types.SeedSettings{
 				Scheduling: &gardener_types.SeedSettingScheduling{
 					Visible: true,
@@ -111,6 +112,34 @@ var (
 			LastOperation: &gardener_types.LastOperation{},
 		},
 	}
+	testSeedWithTaints = gardener_types.Seed{
+		Spec: gardener_types.SeedSpec{
+			Provider: gardener_types.SeedProvider{
+				Type:   testProviderType1,
+				Region: testRegion3,
+			},
+			Settings: &gardener_types.SeedSettings{
+				Scheduling: &gardener_types.SeedSettingScheduling{
+					Visible: true,
+				},
+			},
+			Taints: []gardener_types.SeedTaint{
+				{
+					Key: "test-key-taint",
+				},
+			},
+		},
+		Status: gardener_types.SeedStatus{
+			Conditions: []gardener_types.Condition{
+				{
+					Type:   gardener_types.SeedGardenletReady,
+					Status: gardener_types.ConditionTrue,
+				},
+			},
+			LastOperation: &gardener_types.LastOperation{},
+		},
+	}
+
 	testSeedOK = gardener_types.Seed{
 		Spec: gardener_types.SeedSpec{
 			Provider: gardener_types.SeedProvider{
@@ -139,7 +168,7 @@ var (
 				Type:   testProviderType2,
 				Region: testRegion2,
 			},
-			Backup: &gardener_types.SeedBackup{},
+			Backup: &gardener_types.Backup{},
 			Settings: &gardener_types.SeedSettings{
 				Scheduling: &gardener_types.SeedSettingScheduling{
 					Visible: true,
@@ -179,6 +208,7 @@ func TestToProvideRegions(t *testing.T) {
 				testSeedGardenletReadyFalse,
 				testSeedNoSeedBackupBucketsReady,
 				testSeedSeedBackupBucketsReadyFalse,
+				testSeedWithTaints,
 			},
 			expected: types.Providers{},
 		},
@@ -205,6 +235,7 @@ func TestToProvideRegions(t *testing.T) {
 				testSeedGardenletReadyFalse,
 				testSeedNoSeedBackupBucketsReady,
 				testSeedSeedBackupBucketsReadyFalse,
+				testSeedWithTaints,
 				testSeedOKWithBackup,
 				testSeedOK,
 			},
