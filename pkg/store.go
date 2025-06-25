@@ -59,8 +59,11 @@ func BuildStoreFn(opts StoreOpts) Store {
 			return err
 		}
 
+		force := true
+
 		return opts.Patch(ctx, &cm, client.Apply, &client.PatchOptions{
 			FieldManager: FieldManagerName,
+			Force:        &force,
 		})
 	}
 }
