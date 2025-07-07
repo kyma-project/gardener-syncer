@@ -41,7 +41,7 @@ func seedCanBeUsed(seed *gardener_types.Seed) bool {
 
 	result := isDeletionTimesampt && seed.Spec.Settings.Scheduling.Visible && isReady && hasNoTaints
 	if !result {
-		slog.Debug("seed rejected",
+		slog.Info("seed rejected",
 			"name", seed.Name,
 			"isDeletionTimestamp", isDeletionTimesampt,
 			"isVisible", isVisible,
