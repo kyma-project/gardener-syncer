@@ -76,7 +76,7 @@ Finally, the list of regions with exiting seed information for each cloud provid
 ## Contributing
 <!--- mandatory section - do not change this! --->
 
-See the [Contributing Rules](CONTRIBUTING.md) and [docs](./docs/contributor/kcp-sync-gardener-seed.md).
+See the [Contributing Rules](CONTRIBUTING.md) and [architectural docs](./docs/contributor/arch/001-kcp-sync-gardener-seed.md).
 
 ## Code of Conduct
 <!--- mandatory section - do not change this! --->
