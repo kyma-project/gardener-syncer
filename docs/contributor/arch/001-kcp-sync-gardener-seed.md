@@ -1,7 +1,7 @@
 # Architecture of Gardener Syncer
 
 This document contains the results of an investigation for a possible solution to provide available
-Gardener Seeds region information for Kyma Control Plane (KCP) services as requested in [issue #629](https://github.com/kyma-project/infrastructure-manager/issues/629).
+Gardener Seeds region information for Kyma Control Plane (KCP) services as requested in [issue #629](https://github.com/kyma-project/kyma-infrastructure-manager/issues/629).
 
 ## Technical Context
 The Kyma Runtime is created on top of the Gardener System as a Gardener Shoot cluster.
