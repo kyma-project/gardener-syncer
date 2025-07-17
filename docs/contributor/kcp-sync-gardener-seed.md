@@ -1,18 +1,18 @@
 # Architecture Decision Record
 
-This document contains the results of an investigation for a possible solution to provide available \
+This document contains the results of an investigation for a possible solution to provide available
 Gardener Seeds region information for Kyma Control Plane (KCP) services as requested in [issue #629](https://github.com/kyma-project/infrastructure-manager/issues/629).
 
 ## Current Architecture
 
-The Kyma Runtime is created on top of the Gardener System as a Gardener Shoot cluster. \
-For every Kubernetes Shoot cluster, its Control Plane services are located in a separate Kubernetes cluster named Gardener Seed. \
+The Kyma Runtime is created on top of the Gardener System as a Gardener Shoot cluster.
+For every Kubernetes Shoot cluster, its Control Plane services are located in a separate Kubernetes cluster named Gardener Seed.
 There can be multiple Gardener Shoots managed by a single Gardener Seed cluster.
 
 <img alt="shoot.png" height="300" src="./assets/shoot.png" width="600"/>
 
-The set of active Seed clusters is managed on the Gardener System level. \
-During shoot creation, the Gardener system assigns a Seed for a Shoot based on internal configuration and availability of resources. \
+The set of active Seed clusters is managed on the Gardener System level.
+During shoot creation, the Gardener system assigns a Seed for a Shoot based on internal configuration and availability of resources.
 When the Shoot is fully created, the information about the used Seed can be read from the Shoot CR instance.
 
 > [!NOTE]
@@ -21,15 +21,15 @@ When the Shoot is fully created, the information about the used Seed can be read
 
 ## Problem description:
 
-The number of available Seed clusters is limited, and they exist only in several cloud provider regions. \
-It is highly probable that for the provisioned Kyma runtime, the actual Seed cluster (assigned by Gardener) will be located in a different cloud region than the Shoot cluster. \
-Such a situation can be problematic. \
-In some use cases, users require the Kyma runtime to be fully located in the same cloud provider region — both the underlying Gardener Shoot and its Seed. \
+The number of available Seed clusters is limited, and they exist only in several cloud provider regions.
+It is highly probable that for the provisioned Kyma runtime, the actual Seed cluster (assigned by Gardener) will be located in a different cloud region than the Shoot cluster.
+Such a situation can be problematic.
+In some use cases, users require the Kyma runtime to be fully located in the same cloud provider region — both the underlying Gardener Shoot and its Seed.
 There is a special checkbox to enforce this requirement during the initial setup of the Kyma runtime.
 
 ![seed_same_region_check.png](./assets/seed_same_region_check.png)
 
-As of now, when this checkbox is enabled, the KEB service is not able to validate if the actual Gardener Seed is available in the chosen region before provisioning starts. \
+As of now, when this checkbox is enabled, the KEB service is not able to validate if the actual Gardener Seed is available in the chosen region before provisioning starts.
 In such a case, the provisioning operation fails because of a missing Seed, and this fact is reported to the user after two hours after when provisioning times out.
 
 ## Business Requirements
@@ -59,13 +59,13 @@ The Golang program will implement the following logic:
 - Group the list of regions by cloud provider and store in the ConfigMap.
 
 > [!Note]
-> We decided that the best approach is to exclude out seeds with unknown taints from the dataset. \
-> Taints on Seeds are applied intentionally to restrict the possibility of using such Seeds to only Shoots with some specific configuration. \
+> We decided that the best approach is to exclude out seeds with unknown taints from the dataset.
+> Taints on Seeds are applied intentionally to restrict the possibility of using such Seeds to only Shoots with some specific configuration.
 > As KIM service does not know how to set up Shoot to be compatible with Seed with unknown taint, we cannot use such Seed for provisioning. 
 >
-> On the other hand, there are some known taints that should be allowed to be used for provisioning. \
-> When a Seed is marked with such a taint, we can be sure that a Shoot provided for this Seed will be configured correctly. \
-> To support such known taints, we should provide its list as a parameter for the job Golang program and allow \
+> On the other hand, there are some known taints that should be allowed to be used for provisioning.
+> When a Seed is marked with such a taint, we can be sure that a Shoot provided for this Seed will be configured correctly.
+> To support such known taints, we should provide its list as a parameter for the job Golang program and allow
 > for processing them during the generation of seed region data. This will be done in https://github.com/kyma-project/gardener-syncer/issues/53.
 
 ## Data Format Proposal
@@ -114,9 +114,9 @@ metadata:
 
 ## Summary
 
-A proposed solution is to implement a Golang program that will fetch the Gardener Seeds region data from the Gardener System API and store it in a ConfigMap in the `kcp-system` namespace. \
-This data will be updated regularly by a Kubernetes CronJob. \
-The ConfigMap will contain the list of available Gardener Seeds regions grouped by cloud provider. \
+A proposed solution is to implement a Golang program that will fetch the Gardener Seeds region data from the Gardener System API and store it in a ConfigMap in the `kcp-system` namespace.
+This data will be updated regularly by a Kubernetes CronJob.
+The ConfigMap will contain the list of available Gardener Seeds regions grouped by cloud provider.
 The solution will ensure that Kyma Control Plane services can access the region data where Gardener Seeds are available and can use it to validate provisioning requests.
 
 The fully implemented solution can be found in [Gardener-syncer repository](https://github.com/kyma-project/gardener-syncer)
