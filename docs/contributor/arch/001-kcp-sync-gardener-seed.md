@@ -8,7 +8,7 @@ The Kyma Runtime is created on top of the Gardener System as a Gardener Shoot cl
 For every Kubernetes Shoot cluster, its Control Plane services are located in a separate Kubernetes cluster named Gardener Seed.
 There can be multiple Gardener Shoots managed by a single Gardener Seed cluster.
 
-<img alt="shoot.png" height="300" src="./assets/shoot.png" width="600"/>
+<img alt="shoot.png" height="300" src="../assets/shoot.png" width="600"/>
 
 The set of active Seed clusters is managed on the Gardener System level.
 During shoot creation, the Gardener system assigns a Seed for a Shoot based on internal configuration and availability of resources.
@@ -26,7 +26,7 @@ Such a situation can be problematic.
 In some use cases, users require the Kyma runtime to be fully located in the same cloud provider region — both the underlying Gardener Shoot and its Seed.
 There is a special checkbox to enforce this requirement during the initial setup of the Kyma runtime.
 
-![seed_same_region_check.png](./assets/seed_same_region_check.png)
+![seed_same_region_check.png](../assets/seed_same_region_check.png)
 
 As of now, when this checkbox is enabled, the KEB service is not able to validate if the actual Gardener Seed is available in the chosen region before provisioning starts.
 In such a case, the provisioning operation fails because of a missing Seed, and this fact is reported to the user after two hours after when provisioning times out.
@@ -43,7 +43,7 @@ In such a case, the provisioning operation fails because of a missing Seed, and 
 - The ConfigMap data will be updated regularly by the Kubernetes CronJob. Proposed name for the job is `gardener-syncer-job`
 - The CronJob will run once a day a Golang program that will fetch the seed information data from the Gardener System and update the ConfigMap with the new data.
 
-![Gardener Syncer High Level Architecture](./assets/gardener-syncer-high-level-tam.png)
+![Gardener Syncer High Level Architecture](../assets/gardener-syncer-high-level-tam.png)
 
 ## Implementation Details
 The Golang program will implement the following logic:
