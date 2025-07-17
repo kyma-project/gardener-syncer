@@ -118,5 +118,4 @@ This data will be updated regularly by a Kubernetes CronJob.
 The ConfigMap will contain the list of available Gardener Seeds regions grouped by cloud provider.
 The solution will ensure that Kyma Control Plane services can access the region data where Gardener Seeds are available and can use it to validate provisioning requests.
 
-The fully implemented solution can be found in [Gardener-syncer repository](https://github.com/kyma-project/gardener-syncer)
 
