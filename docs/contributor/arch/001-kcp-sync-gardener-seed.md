@@ -1,10 +1,9 @@
-# Architecture Decision Record
+# Architecture of Gardener Syncer
 
 This document contains the results of an investigation for a possible solution to provide available
 Gardener Seeds region information for Kyma Control Plane (KCP) services as requested in [issue #629](https://github.com/kyma-project/infrastructure-manager/issues/629).
 
-## Current Architecture
-
+## Technical Context
 The Kyma Runtime is created on top of the Gardener System as a Gardener Shoot cluster.
 For every Kubernetes Shoot cluster, its Control Plane services are located in a separate Kubernetes cluster named Gardener Seed.
 There can be multiple Gardener Shoots managed by a single Gardener Seed cluster.
