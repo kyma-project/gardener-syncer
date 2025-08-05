@@ -3,6 +3,7 @@ package seeker_test
 import (
 	"context"
 	"fmt"
+	"github.com/kyma-project/infrastructure-manager/pkg/config"
 	"testing"
 
 	gardener_types "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -63,7 +64,7 @@ func TestBuildFet(t *testing.T) {
 			// GIVEN
 			fetchSeeds := seeker.BuildFetchSeedFn(seeker.FetchSeedsOpts{
 				List: testCase.list,
-			})
+			}, config.TolerationsConfig{})
 
 			// WHEN
 			actual, err := fetchSeeds()

@@ -18,8 +18,9 @@ type Gardener struct {
 }
 
 type Config struct {
-	Gardener Gardener
-	LogLevel string
+	Gardener                Gardener
+	LogLevel                string
+	ConverterConfigFilepath string
 }
 
 func (c *Config) seedMapKey() client.ObjectKey {
@@ -93,16 +94,18 @@ func (c *Config) Validate() error {
 }
 
 const (
-	FlagNameGardenerKubeconfigPath            = "gardener-kubeconfig-path"
-	FlagNameGardenerSeedConfigMapName         = "gardener-seed-map-name"
-	FlagNameGardenerSeedConfigMapNamespace    = "gardener-seed-map-namespace"
-	FlagNameGardenerTimeout                   = "gardener-timeout"
+	FlagDefaultConverterConfigPath            = "/converter-config/converter_config.json"
 	FlagDefaultGardenerKubeconfigPath         = "/gardener/kubeconfig"
 	FlagDefaultGardenerSeedConfigMapName      = "gardener-seeds-cache"
 	FlagDefaultGardenerSeedConfigMapNamespace = "kcp-system"
 	FlagDefaultGardenerTimeout                = "10s"
-	FlagNameLogLevel                          = "log-level"
 	FlagDefaultLogLevel                       = "INFO"
+	FlagNameConverterConfigPath               = "converter-config-filepath"
+	FlagNameGardenerKubeconfigPath            = "gardener-kubeconfig-path"
+	FlagNameGardenerSeedConfigMapName         = "gardener-seed-map-name"
+	FlagNameGardenerSeedConfigMapNamespace    = "gardener-seed-map-namespace"
+	FlagNameGardenerTimeout                   = "gardener-timeout"
+	FlagNameLogLevel                          = "log-level"
 )
 
 func logLevelMappingKeys() []string {
@@ -120,6 +123,7 @@ func NewConfigFromFlags() (Config, error) {
 	flag.StringVar(&out.Gardener.SeedMapName, FlagNameGardenerSeedConfigMapName, FlagDefaultGardenerSeedConfigMapName, "The name of the config-map that will store gardener seeds.")
 	flag.StringVar(&out.Gardener.SeedMapNamespace, FlagNameGardenerSeedConfigMapNamespace, FlagDefaultGardenerSeedConfigMapNamespace, "The namespace of the config-map that will store gardener seeds.")
 	flag.StringVar(&out.Gardener.Timeout, FlagNameGardenerTimeout, FlagDefaultGardenerTimeout, "Gardener client timeout duration.")
+	flag.StringVar(&out.ConverterConfigFilepath, FlagNameConverterConfigPath, FlagDefaultConverterConfigPath, "File path to the gardener shoot converter configuration.")
 	flag.StringVar(&out.LogLevel, FlagNameLogLevel, FlagDefaultLogLevel, fmt.Sprintf("One of: %s", strings.Join(logLevelMappingKeys(), ",")))
 
 	flag.Parse()
