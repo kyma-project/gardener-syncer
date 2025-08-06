@@ -2,6 +2,7 @@ package seeker
 
 import (
 	"context"
+	"github.com/kyma-project/infrastructure-manager/pkg/config"
 	"time"
 
 	gardener_types "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -18,7 +19,7 @@ type FetchSeedsOpts struct {
 	List
 }
 
-func BuildFetchSeedFn(opts FetchSeedsOpts) FetchSeeds {
+func BuildFetchSeedFn(opts FetchSeedsOpts, tolerations config.TolerationsConfig) FetchSeeds {
 	return func() (types.Providers, error) {
 		ctx, cancel := context.WithTimeout(context.Background(), opts.Timeout)
 		defer LogWithDuration(time.Now(), "fetching gardener data complete")
@@ -29,7 +30,7 @@ func BuildFetchSeedFn(opts FetchSeedsOpts) FetchSeeds {
 			return nil, err
 		}
 
-		return ToProviderRegions(seeds.Items), nil
+		return ToProviderRegions(seeds.Items, tolerations), nil
 	}
 }
 

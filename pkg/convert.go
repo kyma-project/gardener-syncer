@@ -1,6 +1,7 @@
 package seeker
 
 import (
+	"github.com/kyma-project/infrastructure-manager/pkg/config"
 	"log/slog"
 	"strings"
 	"time"
@@ -30,14 +31,33 @@ func verifySeedReadiness(seed *gardener_types.Seed) bool {
 	return true
 }
 
-func seedCanBeUsed(seed *gardener_types.Seed) bool {
+func checkTolerations(seed *gardener_types.Seed, tolerationConfig config.TolerationsConfig) bool {
+	tolerations, regionHasTolerations := tolerationConfig[seed.Spec.Provider.Region]
+	taintsN := len(seed.Spec.Taints)
+	if !regionHasTolerations || taintsN == 0 {
+		return taintsN == 0
+	}
+
+tnt:
+	for _, taint := range seed.Spec.Taints {
+		for _, toleration := range tolerations {
+			if taint.Key == toleration.Key && (toleration.Value == nil || taint.Value == toleration.Value) {
+				continue tnt
+			}
+		}
+		return false
+	}
+	return true
+}
+
+func seedCanBeUsed(seed *gardener_types.Seed, tolerations config.TolerationsConfig) bool {
 	isDeletionTimesampt := seed.DeletionTimestamp == nil
 	isReady := verifySeedReadiness(seed)
 	isVisible := seed.Spec.Settings != nil &&
 		seed.Spec.Settings.Scheduling != nil &&
 		seed.Spec.Settings.Scheduling.Visible
 
-	hasNoTaints := len(seed.Spec.Taints) == 0
+	hasNoTaints := checkTolerations(seed, tolerations)
 
 	result := isDeletionTimesampt && seed.Spec.Settings.Scheduling.Visible && isReady && hasNoTaints
 	if !result {
@@ -51,12 +71,12 @@ func seedCanBeUsed(seed *gardener_types.Seed) bool {
 	return result
 }
 
-func ToProviderRegions(seeds []gardener_types.Seed) (out types.Providers) {
+func ToProviderRegions(seeds []gardener_types.Seed, tolerations config.TolerationsConfig) (out types.Providers) {
 	defer LogWithDuration(time.Now(), "conversion complete")
 
 	out = types.Providers{}
 	for _, seed := range seeds {
-		if seedCanBeUsed(&seed) {
+		if seedCanBeUsed(&seed, tolerations) {
 			out.Add(
 				seed.Spec.Provider.Type,
 				seed.Spec.Provider.Region,
