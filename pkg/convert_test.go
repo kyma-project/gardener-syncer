@@ -1,6 +1,7 @@
 package seeker_test
 
 import (
+	"github.com/kyma-project/infrastructure-manager/pkg/config"
 	"testing"
 
 	gardener_types "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -16,6 +17,7 @@ var (
 	testRegion1       = "test-region1"
 	testRegion2       = "test-region2"
 	testRegion3       = "test-region3"
+	testTaintKey      = "test-key-taint"
 
 	testSeedInDeletion = gardener_types.Seed{
 		ObjectMeta: metav1.ObjectMeta{
@@ -125,7 +127,35 @@ var (
 			},
 			Taints: []gardener_types.SeedTaint{
 				{
-					Key: "test-key-taint",
+					Key: testTaintKey,
+				},
+			},
+		},
+		Status: gardener_types.SeedStatus{
+			Conditions: []gardener_types.Condition{
+				{
+					Type:   gardener_types.SeedGardenletReady,
+					Status: gardener_types.ConditionTrue,
+				},
+			},
+			LastOperation: &gardener_types.LastOperation{},
+		},
+	}
+
+	testSeedWithToleratedTaints = gardener_types.Seed{
+		Spec: gardener_types.SeedSpec{
+			Provider: gardener_types.SeedProvider{
+				Type:   testProviderType1,
+				Region: testRegion1,
+			},
+			Settings: &gardener_types.SeedSettings{
+				Scheduling: &gardener_types.SeedSettingScheduling{
+					Visible: true,
+				},
+			},
+			Taints: []gardener_types.SeedTaint{
+				{
+					Key: testTaintKey,
 				},
 			},
 		},
@@ -213,6 +243,20 @@ func TestToProvideRegions(t *testing.T) {
 			expected: types.Providers{},
 		},
 		{
+			name: "tolerations",
+			seeds: []gardener_types.Seed{
+				testSeedWithToleratedTaints,
+				testSeedWithTaints,
+			},
+			expected: types.Providers{
+				testSeedWithToleratedTaints.Spec.Provider.Type: {
+					SeedRegions: []string{
+						testSeedWithToleratedTaints.Spec.Provider.Region,
+					},
+				},
+			},
+		},
+		{
 			name: "seed found",
 			seeds: []gardener_types.Seed{
 				testSeedOKWithBackup,
@@ -257,7 +301,9 @@ func TestToProvideRegions(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			// WHEN
-			actual := seeker.ToProviderRegions(testCase.seeds)
+			actual := seeker.ToProviderRegions(testCase.seeds, config.TolerationsConfig{
+				testRegion1: {{Key: testTaintKey}},
+			})
 
 			// THEN
 			require.Equal(t, testCase.expected, actual)
