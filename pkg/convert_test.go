@@ -250,11 +250,12 @@ func TestToProvideRegions(t *testing.T) {
 			name: "tolerations by key",
 			seeds: []gardener_types.Seed{
 				taintedSeed(testRegion1, gardener_types.SeedTaint{Key: testTaintKey1}),
-				taintedSeed(testRegion2, gardener_types.SeedTaint{Key: testTaintKey1}),
+				taintedSeed(testRegion2, gardener_types.SeedTaint{Key: testTaintKey2}),
 				taintedSeed(testRegion3, gardener_types.SeedTaint{Key: testTaintKey1, Value: &testTaintValue1}),
 			},
 			tolerations: config.TolerationsConfig{
 				testRegion1: {{Key: testTaintKey1}},
+				testRegion2: {{Key: testTaintKey1}},
 				testRegion3: {{Key: testTaintKey1}},
 			},
 			expected: types.Providers{
