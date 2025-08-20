@@ -1,12 +1,12 @@
 package seeker_test
 
 import (
-	"github.com/kyma-project/infrastructure-manager/pkg/config"
 	"testing"
 
 	gardener_types "github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	seeker "github.com/kyma-project/gardener-syncer/pkg"
 	"github.com/kyma-project/gardener-syncer/pkg/types"
+	"github.com/kyma-project/infrastructure-manager/pkg/config"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -17,7 +17,10 @@ var (
 	testRegion1       = "test-region1"
 	testRegion2       = "test-region2"
 	testRegion3       = "test-region3"
-	testTaintKey      = "test-key-taint"
+	testTaintKey1     = "test-key-taint"
+	testTaintKey2     = "test-other-key-taint"
+	testTaintValue1   = "test-value-taint"
+	testTaintValue2   = "test-other-value-taint"
 
 	testSeedInDeletion = gardener_types.Seed{
 		ObjectMeta: metav1.ObjectMeta{
@@ -127,7 +130,7 @@ var (
 			},
 			Taints: []gardener_types.SeedTaint{
 				{
-					Key: testTaintKey,
+					Key: testTaintKey1,
 				},
 			},
 		},
@@ -155,7 +158,7 @@ var (
 			},
 			Taints: []gardener_types.SeedTaint{
 				{
-					Key: testTaintKey,
+					Key: testTaintKey1,
 				},
 			},
 		},
@@ -224,9 +227,10 @@ var (
 func TestToProvideRegions(t *testing.T) {
 
 	testCases := []struct {
-		name     string
-		seeds    []gardener_types.Seed
-		expected types.Providers
+		name        string
+		seeds       []gardener_types.Seed
+		tolerations config.TolerationsConfig
+		expected    types.Providers
 	}{
 		{
 			name: "seed filtered",
@@ -243,16 +247,36 @@ func TestToProvideRegions(t *testing.T) {
 			expected: types.Providers{},
 		},
 		{
-			name: "tolerations",
+			name: "tolerations by key",
 			seeds: []gardener_types.Seed{
-				testSeedWithToleratedTaints,
-				testSeedWithTaints,
+				taintedSeed(testRegion1, gardener_types.SeedTaint{Key: testTaintKey1}),
+				taintedSeed(testRegion2, gardener_types.SeedTaint{Key: testTaintKey1}),
+				taintedSeed(testRegion3, gardener_types.SeedTaint{Key: testTaintKey1, Value: &testTaintValue1}),
+			},
+			tolerations: config.TolerationsConfig{
+				testRegion1: {{Key: testTaintKey1}},
+				testRegion3: {{Key: testTaintKey1}},
 			},
 			expected: types.Providers{
 				testSeedWithToleratedTaints.Spec.Provider.Type: {
-					SeedRegions: []string{
-						testSeedWithToleratedTaints.Spec.Provider.Region,
-					},
+					SeedRegions: []string{testRegion1},
+				},
+			},
+		},
+		{
+			name: "tolerations by value",
+			seeds: []gardener_types.Seed{
+				taintedSeed(testRegion1, gardener_types.SeedTaint{Key: testTaintKey1, Value: &testTaintValue2}),
+				taintedSeed(testRegion1, gardener_types.SeedTaint{Key: testTaintKey1}),
+				taintedSeed(testRegion2, gardener_types.SeedTaint{Key: testTaintKey1, Value: &testTaintValue1}),
+			},
+			tolerations: config.TolerationsConfig{
+				testRegion1: {{Key: testTaintKey1, Value: &testTaintValue1}},
+				testRegion2: {{Key: testTaintKey1, Value: &testTaintValue1}},
+			},
+			expected: types.Providers{
+				testSeedWithToleratedTaints.Spec.Provider.Type: {
+					SeedRegions: []string{testRegion2},
 				},
 			},
 		},
@@ -301,12 +325,36 @@ func TestToProvideRegions(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			// WHEN
-			actual := seeker.ToProviderRegions(testCase.seeds, config.TolerationsConfig{
-				testRegion1: {{Key: testTaintKey}},
-			})
+			actual := seeker.ToProviderRegions(testCase.seeds, testCase.tolerations)
 
 			// THEN
 			require.Equal(t, testCase.expected, actual)
 		})
+	}
+}
+
+func taintedSeed(region string, taints ...gardener_types.SeedTaint) gardener_types.Seed {
+	return gardener_types.Seed{
+		Spec: gardener_types.SeedSpec{
+			Provider: gardener_types.SeedProvider{
+				Type:   testProviderType1,
+				Region: region,
+			},
+			Settings: &gardener_types.SeedSettings{
+				Scheduling: &gardener_types.SeedSettingScheduling{
+					Visible: true,
+				},
+			},
+			Taints: taints,
+		},
+		Status: gardener_types.SeedStatus{
+			Conditions: []gardener_types.Condition{
+				{
+					Type:   gardener_types.SeedGardenletReady,
+					Status: gardener_types.ConditionTrue,
+				},
+			},
+			LastOperation: &gardener_types.LastOperation{},
+		},
 	}
 }

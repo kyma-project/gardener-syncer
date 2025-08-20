@@ -1,10 +1,11 @@
 package seeker
 
 import (
-	"github.com/kyma-project/infrastructure-manager/pkg/config"
 	"log/slog"
 	"strings"
 	"time"
+
+	"github.com/kyma-project/infrastructure-manager/pkg/config"
 
 	"sigs.k8s.io/yaml"
 
@@ -31,23 +32,40 @@ func verifySeedReadiness(seed *gardener_types.Seed) bool {
 	return true
 }
 
-func checkTolerations(seed *gardener_types.Seed, tolerationConfig config.TolerationsConfig) bool {
-	tolerations, regionHasTolerations := tolerationConfig[seed.Spec.Provider.Region]
-	taintsN := len(seed.Spec.Taints)
-	if !regionHasTolerations || taintsN == 0 {
-		return taintsN == 0
+func verifySeedTaints(seed *gardener_types.Seed, tolerationConfig config.TolerationsConfig) bool {
+	if len(seed.Spec.Taints) == 0 {
+		return true
 	}
 
-tnt:
+	tolerations, seedRegionHasTolerations := tolerationConfig[seed.Spec.Provider.Region]
+
+	if !seedRegionHasTolerations {
+		return false // If seed has taints and there are no tolerations for the seed region, we cannot use the seed
+	}
+
 	for _, taint := range seed.Spec.Taints {
-		for _, toleration := range tolerations {
-			if taint.Key == toleration.Key && (toleration.Value == nil || taint.Value == toleration.Value) {
-				continue tnt
-			}
+		matched := taintMatched(taint, tolerations)
+		if !matched {
+			return false // If any taint does not match its toleration, we cannot use the seed
 		}
-		return false
 	}
 	return true
+}
+
+func taintMatched(taint gardener_types.SeedTaint, tolerations []gardener_types.Toleration) bool {
+	for _, toleration := range tolerations {
+		if taint.Key != toleration.Key {
+			continue
+		}
+		if toleration.Value == nil && taint.Value == nil {
+			return true // value `nil` only matches `nil` (?)
+		}
+
+		if toleration.Value != nil && taint.Value != nil && *taint.Value == *toleration.Value {
+			return true
+		}
+	}
+	return false
 }
 
 func seedCanBeUsed(seed *gardener_types.Seed, tolerations config.TolerationsConfig) bool {
@@ -57,7 +75,7 @@ func seedCanBeUsed(seed *gardener_types.Seed, tolerations config.TolerationsConf
 		seed.Spec.Settings.Scheduling != nil &&
 		seed.Spec.Settings.Scheduling.Visible
 
-	hasNoTaints := checkTolerations(seed, tolerations)
+	hasNoTaints := verifySeedTaints(seed, tolerations)
 
 	result := isDeletionTimesampt && seed.Spec.Settings.Scheduling.Visible && isReady && hasNoTaints
 	if !result {

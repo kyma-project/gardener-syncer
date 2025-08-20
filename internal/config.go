@@ -132,12 +132,11 @@ func NewConfigFromFlags() (Config, error) {
 		return Config{}, err
 	}
 
-	slog.Info("configuration parsed",
-		FlagNameGardenerKubeconfigPath, out.Gardener.KubeconfigPath,
-		FlagNameGardenerSeedConfigMapName, out.Gardener.SeedMapName,
-		FlagNameGardenerSeedConfigMapNamespace, out.Gardener.SeedMapNamespace,
-		FlagNameGardenerTimeout, out.Gardener.Timeout,
-	)
+	flags := make([]any, 0)
+	flag.VisitAll(func(f *flag.Flag) {
+		flags = append(flags, f.Name, f.Value.String())
+	})
+	slog.Info("configuration parsed", flags...)
 
 	return out, nil
 }

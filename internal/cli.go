@@ -3,13 +3,14 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kyma-project/infrastructure-manager/pkg/config"
 	"log/slog"
 	log "log/slog"
 	"net/http"
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/kyma-project/infrastructure-manager/pkg/config"
 
 	"github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	"github.com/kyma-project/gardener-syncer/internal/k8s/client"
@@ -52,8 +53,7 @@ func Run() error {
 
 	var tolerations config.TolerationsConfig
 	if converterCfg, err := loadConverterConfig(cfg.ConverterConfigFilepath); err != nil {
-		slog.Warn("unable to load tolerations config, ignoring tolerations", "error", err)
-		tolerations = config.TolerationsConfig{}
+		return err
 	} else {
 		tolerations = converterCfg.Tolerations
 	}
@@ -92,9 +92,10 @@ func Run() error {
 
 	gardenerTimeout := mustParseDuration(cfg.Gardener.Timeout)
 	fetch := seeker.BuildFetchSeedFn(seeker.FetchSeedsOpts{
-		List:    gardenerClient.List,
-		Timeout: gardenerTimeout,
-	}, tolerations)
+		List:        gardenerClient.List,
+		Timeout:     gardenerTimeout,
+		Tolerations: tolerations,
+	})
 
 	sync := seeker.BuildSyncFn(store, fetch)
 	return sync()
