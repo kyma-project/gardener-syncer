@@ -29,7 +29,7 @@ type StoreOpts struct {
 }
 
 func LogWithDuration(startTime time.Time, msg string, args ...any) {
-	duration := time.Now().Sub(startTime)
+	duration := time.Since(startTime)
 	log.With(args...).With("duration", duration).Info(msg)
 }
 
