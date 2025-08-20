@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kyma-project/infrastructure-manager/pkg/config"
+
 	"sigs.k8s.io/yaml"
 
 	gardener_types "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -30,33 +32,69 @@ func verifySeedReadiness(seed *gardener_types.Seed) bool {
 	return true
 }
 
-func seedCanBeUsed(seed *gardener_types.Seed) bool {
-	isDeletionTimesampt := seed.DeletionTimestamp == nil
+func verifySeedTaints(seed *gardener_types.Seed, tolerationConfig config.TolerationsConfig) bool {
+	if len(seed.Spec.Taints) == 0 {
+		return true
+	}
+
+	tolerations, seedRegionHasTolerations := tolerationConfig[seed.Spec.Provider.Region]
+
+	if !seedRegionHasTolerations {
+		return false // If seed has taints and there are no tolerations for the seed region, we cannot use the seed
+	}
+
+	for _, taint := range seed.Spec.Taints {
+		matched := taintMatched(taint, tolerations)
+		if !matched {
+			return false // If any taint does not match its toleration, we cannot use the seed
+		}
+	}
+	return true
+}
+
+func taintMatched(taint gardener_types.SeedTaint, tolerations []gardener_types.Toleration) bool {
+	for _, toleration := range tolerations {
+		if taint.Key != toleration.Key {
+			continue
+		}
+		if toleration.Value == nil && taint.Value == nil {
+			return true // value `nil` only matches `nil` (?)
+		}
+
+		if toleration.Value != nil && taint.Value != nil && *taint.Value == *toleration.Value {
+			return true
+		}
+	}
+	return false
+}
+
+func seedCanBeUsed(seed *gardener_types.Seed, tolerations config.TolerationsConfig) bool {
+	hasNoDeletionTimestamp := seed.DeletionTimestamp == nil
 	isReady := verifySeedReadiness(seed)
 	isVisible := seed.Spec.Settings != nil &&
 		seed.Spec.Settings.Scheduling != nil &&
 		seed.Spec.Settings.Scheduling.Visible
 
-	hasNoTaints := len(seed.Spec.Taints) == 0
+	hasCorrectTaintsConfig := verifySeedTaints(seed, tolerations)
 
-	result := isDeletionTimesampt && seed.Spec.Settings.Scheduling.Visible && isReady && hasNoTaints
+	result := hasNoDeletionTimestamp && seed.Spec.Settings.Scheduling.Visible && isReady && hasCorrectTaintsConfig
 	if !result {
 		slog.Info("seed rejected",
 			"name", seed.Name,
-			"isDeletionTimestamp", isDeletionTimesampt,
+			"hasNoDeletionTimestamp", hasNoDeletionTimestamp,
 			"isVisible", isVisible,
-			"hasNoTaints", hasNoTaints,
+			"hasCorrectTaintsConfig", hasCorrectTaintsConfig,
 			"isReady", isReady)
 	}
 	return result
 }
 
-func ToProviderRegions(seeds []gardener_types.Seed) (out types.Providers) {
+func ToProviderRegions(seeds []gardener_types.Seed, tolerations config.TolerationsConfig) (out types.Providers) {
 	defer LogWithDuration(time.Now(), "conversion complete")
 
 	out = types.Providers{}
 	for _, seed := range seeds {
-		if seedCanBeUsed(&seed) {
+		if seedCanBeUsed(&seed, tolerations) {
 			out.Add(
 				seed.Spec.Provider.Type,
 				seed.Spec.Provider.Region,
