@@ -69,21 +69,21 @@ func taintMatched(taint gardener_types.SeedTaint, tolerations []gardener_types.T
 }
 
 func seedCanBeUsed(seed *gardener_types.Seed, tolerations config.TolerationsConfig) bool {
-	isDeletionTimesampt := seed.DeletionTimestamp == nil
+	hasNoDeletionTimestamp := seed.DeletionTimestamp == nil
 	isReady := verifySeedReadiness(seed)
 	isVisible := seed.Spec.Settings != nil &&
 		seed.Spec.Settings.Scheduling != nil &&
 		seed.Spec.Settings.Scheduling.Visible
 
-	hasNoTaints := verifySeedTaints(seed, tolerations)
+	hasCorrectTaintsConfig := verifySeedTaints(seed, tolerations)
 
-	result := isDeletionTimesampt && seed.Spec.Settings.Scheduling.Visible && isReady && hasNoTaints
+	result := hasNoDeletionTimestamp && seed.Spec.Settings.Scheduling.Visible && isReady && hasCorrectTaintsConfig
 	if !result {
 		slog.Info("seed rejected",
 			"name", seed.Name,
-			"isDeletionTimestamp", isDeletionTimesampt,
+			"hasNoDeletionTimestamp", hasNoDeletionTimestamp,
 			"isVisible", isVisible,
-			"hasNoTaints", hasNoTaints,
+			"hasCorrectTaintsConfig", hasCorrectTaintsConfig,
 			"isReady", isReady)
 	}
 	return result
