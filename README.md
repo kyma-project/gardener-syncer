@@ -2,7 +2,6 @@
 
 # Gardener Syncer Job
 
-
 ## Overview
 
 Cronjob which is regularly synchronizing the Seed-data from Gardener System to Kyma Control Plane.
