@@ -1,12 +1,16 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	log "log/slog"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
+
+	"github.com/kyma-project/infrastructure-manager/pkg/config"
 
 	"github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	"github.com/kyma-project/gardener-syncer/internal/k8s/client"
@@ -23,6 +27,18 @@ var (
 	}
 )
 
+func loadConverterConfig(path string) (cfg config.ConverterConfig, err error) {
+	tolerationFile, err := os.Open(path)
+	if err != nil {
+		return cfg, fmt.Errorf("unable to open tolerations config file %s: %w", path, err)
+	}
+	err = json.NewDecoder(tolerationFile).Decode(&cfg)
+	if err != nil {
+		return cfg, fmt.Errorf("unable to decode tolerations config file %s: %w", path, err)
+	}
+	return
+}
+
 func Run() error {
 	defer seeker.LogWithDuration(time.Now(), "application finished")
 	defer haltIstioSidecar()
@@ -34,6 +50,13 @@ func Run() error {
 
 	logLevel := mustParseLogLevel(cfg.LogLevel)
 	slog.SetLogLoggerLevel(logLevel)
+
+	var tolerations config.TolerationsConfig
+	if converterCfg, err := loadConverterConfig(cfg.ConverterConfigFilepath); err != nil {
+		return err
+	} else {
+		tolerations = converterCfg.Tolerations
+	}
 
 	kcpClient, err := client.New(client.Options{
 		AdditionalAddToSchema: []func(*runtime.Scheme) error{
@@ -69,8 +92,9 @@ func Run() error {
 
 	gardenerTimeout := mustParseDuration(cfg.Gardener.Timeout)
 	fetch := seeker.BuildFetchSeedFn(seeker.FetchSeedsOpts{
-		List:    gardenerClient.List,
-		Timeout: gardenerTimeout,
+		List:        gardenerClient.List,
+		Timeout:     gardenerTimeout,
+		Tolerations: tolerations,
 	})
 
 	sync := seeker.BuildSyncFn(store, fetch)

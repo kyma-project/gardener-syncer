@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/kyma-project/infrastructure-manager/pkg/config"
+
 	gardener_types "github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	"github.com/kyma-project/gardener-syncer/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -14,7 +16,8 @@ type List func(context.Context, client.ObjectList, ...client.ListOption) error
 type FetchSeeds func() (types.Providers, error)
 
 type FetchSeedsOpts struct {
-	Timeout time.Duration
+	Timeout     time.Duration
+	Tolerations config.TolerationsConfig
 	List
 }
 
@@ -29,7 +32,7 @@ func BuildFetchSeedFn(opts FetchSeedsOpts) FetchSeeds {
 			return nil, err
 		}
 
-		return ToProviderRegions(seeds.Items), nil
+		return ToProviderRegions(seeds.Items, opts.Tolerations), nil
 	}
 }
 
