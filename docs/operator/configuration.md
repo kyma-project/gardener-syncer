@@ -13,7 +13,9 @@ The table below describes parameters exposed as user configuration to customize 
 ## Helm chart configuration
 
 It configures the Gardener Syncer job and its dependencies.
-Besides the two parameters described above that can be possibly overridden, the user generally should not modify the internal Helm chart configuration.  
+Besides the two parameters described above that can be possibly overridden, the user generally should not modify the internal Helm chart configuration.
+The default configuration values are tested and guarantees the proper operation of the Gardener Syncer job without any additional changes.
+Any change in the default configuration should be done with caution, and only if the user understands the implications of the change.
 Helm chart configuration parameters are organized into five main sections:
 
 - `jobs.syncer` - Main configuration for the Gardener Syncer job.
