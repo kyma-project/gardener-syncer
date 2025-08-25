@@ -58,14 +58,13 @@ The Golang program will implement the following logic:
 - Group the list of regions by cloud provider and store in the ConfigMap.
 
 > [!Note]
-> We decided that the best approach is to exclude out seeds with unknown taints from the dataset.
 > Taints on Seeds are applied intentionally to restrict the possibility of using such Seeds to only Shoots with some specific configuration.
 > As KIM service does not know how to set up Shoot to be compatible with Seed with unknown taint, we cannot use such Seed for provisioning. 
 >
 > On the other hand, there are some known taints that should be allowed to be used for provisioning.
 > When a Seed is marked with such a taint, we can be sure that a Shoot provided for this Seed will be configured correctly.
 > To support such known taints, we should provide its list as a parameter for the job Golang program and allow
-> for processing them during the generation of seed region data. This will be done in https://github.com/kyma-project/gardener-syncer/issues/53.
+> for processing them during the generation of seed region data. This feature is implemented in https://github.com/kyma-project/gardener-syncer/issues/53.
 
 ## Data Format Proposal
 Assumptions: 
