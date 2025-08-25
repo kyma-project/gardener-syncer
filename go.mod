@@ -4,7 +4,7 @@ go 1.24.4
 
 require (
 	github.com/gardener/gardener v1.125.1
-	github.com/kyma-project/infrastructure-manager v0.0.0-20250820084332-1e140c120b62
+	github.com/kyma-project/infrastructure-manager v0.0.0-20250825184916-1fe8b9ea46fb
 	github.com/stretchr/testify v1.11.0
 	k8s.io/api v0.33.4
 	k8s.io/apimachinery v0.33.4
@@ -46,7 +46,7 @@ require (
 	golang.org/x/term v0.34.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
-	google.golang.org/protobuf v1.36.7 // indirect
+	google.golang.org/protobuf v1.36.8 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/apiextensions-apiserver v0.33.4 // indirect
