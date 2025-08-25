@@ -4,19 +4,19 @@
 
 ## Overview
 
-Gardener Syncer Job is Cronjob that regularly synchronizes the Seed-data from Gardener System to Kyma Control Plane.
+Gardener Syncer Job is a Cronjob that regularly synchronizes the Seed data from Gardener System to Kyma Control Plane (KCP).
 The fetched Gardener Seed data for available cloud providers regions is stored inside a ConfigMap.
 
-For more information, see [architectural docs](./docs/contributor/arch/001-kcp-sync-gardener-seed.md)
+For more information, see [architectural docs](./docs/contributor/arch/001-kcp-sync-gardener-seed.md).
 
 ## Prerequisites
 
-- Gardener Syncer Job is running on the Kyma Control Plane.
+- Gardener Syncer Job is running on KCP.
 - Gardener Syncer Job is configured to connect to the Gardener System with kubeconfig file. 
 
 ## Installation and Configuration
 
-The Gardener Syncer Job is installed and run as an ArgoCD application in the Kyma Control Plane.
+The Gardener Syncer Job is installed and run as an ArgoCD application on KCP.
 
 For more information about the Gardener Syncer Job installation and configuration, see the [installation](./docs/operator/installation.md) and [configuration](./docs/operator/configuration.md) documentation.
 
