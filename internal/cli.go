@@ -37,7 +37,7 @@ func loadConverterConfig(path string) (cfg config.Config, err error) {
 	if err != nil {
 		return cfg, fmt.Errorf("unable to decode tolerations config file %s: %w", path, err)
 	}
-	return
+	return cfg, nil
 }
 
 func Run() error {
