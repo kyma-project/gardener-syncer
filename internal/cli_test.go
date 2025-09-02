@@ -24,6 +24,9 @@ func TestMarshalingStubData(t *testing.T) {
 		if len(converter_config.ConverterConfig.Tolerations) == 0 {
 			t.Fatalf("no tolerations found in config")
 		}
+		if converter_config.ConverterConfig.Tolerations[].key != "key" || converter_config.ConverterConfig.Tolerations[].value != "configured-taint" {
+		t.Fatalf("Failed to unmarshal correctly toleration value from config file")
+		}
 	})
 
 	t.Run("proper marshaling of seeds example", func(t *testing.T) {
