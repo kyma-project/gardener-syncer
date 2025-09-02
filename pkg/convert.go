@@ -14,7 +14,7 @@ import (
 	"github.com/kyma-project/gardener-syncer/pkg/types"
 )
 
-func verifySeedReadiness(seed *gardener_types.Seed) bool {
+func VerifySeedReadiness(seed *gardener_types.Seed) bool {
 	if seed.Status.LastOperation == nil {
 		return false
 	}
@@ -32,7 +32,7 @@ func verifySeedReadiness(seed *gardener_types.Seed) bool {
 	return true
 }
 
-func verifySeedTaints(seed *gardener_types.Seed, tolerationConfig config.TolerationsConfig) bool {
+func VerifySeedTaints(seed *gardener_types.Seed, tolerationConfig config.TolerationsConfig) bool {
 	if len(seed.Spec.Taints) == 0 {
 		return true
 	}
@@ -44,7 +44,7 @@ func verifySeedTaints(seed *gardener_types.Seed, tolerationConfig config.Tolerat
 	}
 
 	for _, taint := range seed.Spec.Taints {
-		matched := taintMatched(taint, tolerations)
+		matched := TaintMatched(taint, tolerations)
 		if !matched {
 			return false // If any taint does not match its toleration, we cannot use the seed
 		}
@@ -52,11 +52,12 @@ func verifySeedTaints(seed *gardener_types.Seed, tolerationConfig config.Tolerat
 	return true
 }
 
-func taintMatched(taint gardener_types.SeedTaint, tolerations []gardener_types.Toleration) bool {
+func TaintMatched(taint gardener_types.SeedTaint, tolerations []gardener_types.Toleration) bool {
 	for _, toleration := range tolerations {
 		if taint.Key != toleration.Key {
 			continue
 		}
+
 		if toleration.Value == nil && taint.Value == nil {
 			return true // value `nil` only matches `nil` (?)
 		}
@@ -68,16 +69,16 @@ func taintMatched(taint gardener_types.SeedTaint, tolerations []gardener_types.T
 	return false
 }
 
-func seedCanBeUsed(seed *gardener_types.Seed, tolerations config.TolerationsConfig) bool {
+func SeedCanBeUsed(seed *gardener_types.Seed, tolerations config.TolerationsConfig) bool {
 	hasNoDeletionTimestamp := seed.DeletionTimestamp == nil
-	isReady := verifySeedReadiness(seed)
+	isReady := VerifySeedReadiness(seed)
 	isVisible := seed.Spec.Settings != nil &&
 		seed.Spec.Settings.Scheduling != nil &&
 		seed.Spec.Settings.Scheduling.Visible
 
-	hasCorrectTaintsConfig := verifySeedTaints(seed, tolerations)
+	hasCorrectTaintsConfig := VerifySeedTaints(seed, tolerations)
 
-	result := hasNoDeletionTimestamp && seed.Spec.Settings.Scheduling.Visible && isReady && hasCorrectTaintsConfig
+	result := hasNoDeletionTimestamp && isVisible && isReady && hasCorrectTaintsConfig
 	if !result {
 		slog.Info("seed rejected",
 			"name", seed.Name,
@@ -94,7 +95,7 @@ func ToProviderRegions(seeds []gardener_types.Seed, tolerations config.Toleratio
 
 	out = types.Providers{}
 	for _, seed := range seeds {
-		if seedCanBeUsed(&seed, tolerations) {
+		if SeedCanBeUsed(&seed, tolerations) {
 			out.Add(
 				seed.Spec.Provider.Type,
 				seed.Spec.Provider.Region,

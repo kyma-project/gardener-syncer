@@ -27,16 +27,17 @@ var (
 	}
 )
 
-func loadConverterConfig(path string) (cfg config.ConverterConfig, err error) {
+func loadConverterConfig(path string) (cfg config.Config, err error) {
 	tolerationFile, err := os.Open(path)
 	if err != nil {
 		return cfg, fmt.Errorf("unable to open tolerations config file %s: %w", path, err)
 	}
+
 	err = json.NewDecoder(tolerationFile).Decode(&cfg)
 	if err != nil {
 		return cfg, fmt.Errorf("unable to decode tolerations config file %s: %w", path, err)
 	}
-	return
+	return cfg, nil
 }
 
 func Run() error {
@@ -55,7 +56,7 @@ func Run() error {
 	if converterCfg, err := loadConverterConfig(cfg.ConverterConfigFilepath); err != nil {
 		return err
 	} else {
-		tolerations = converterCfg.Tolerations
+		tolerations = converterCfg.ConverterConfig.Tolerations
 	}
 
 	kcpClient, err := client.New(client.Options{
