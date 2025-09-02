@@ -5,6 +5,7 @@ import (
 	"github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	seeker "github.com/kyma-project/gardener-syncer/pkg"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"io"
 	"os"
 	"sigs.k8s.io/yaml"
@@ -38,6 +39,11 @@ func TestMarshalingStubData(t *testing.T) {
 		if seeds.Items == nil {
 			t.Fatalf("failed to unmarshal seeds from file: %v", err)
 		}
+	})
+
+	t.Run("error during converter config ", func(t *testing.T) {
+		_, err := loadConverterConfig("non-existing-path.yaml")
+		require.Error(t, err)
 	})
 }
 
