@@ -1,0 +1,101 @@
+apiVersion: v1
+items:
+- apiVersion: core.gardener.cloud/v1beta1
+  kind: Seed
+  metadata:
+    name: aws-ap1
+  spec:
+    provider:
+      region: ap-southeast-1
+      type: aws
+    settings:
+      scheduling:
+        visible: true
+    taints:
+    - key: not-configured-taint
+  status:
+    conditions:
+    - lastTransitionTime: "2025-09-01T12:14:26Z"
+      lastUpdateTime: "2025-09-01T12:14:23Z"
+      message: Gardenlet is posting ready status.
+      reason: GardenletReady
+      status: "True"
+      type: GardenletReady
+    - lastTransitionTime: "2025-09-01T12:14:38Z"
+      lastUpdateTime: "2025-09-01T12:14:23Z"
+      message: Backup Buckets are available.
+      reason: BackupBucketsAvailable
+      status: "True"
+      type: BackupBucketsReady
+    lastOperation:
+      description: Seed cluster has been successfully reconciled.
+      lastUpdateTime: "2025-09-01T12:14:23Z"
+      progress: 100
+      state: Succeeded
+      type: Reconcile
+- apiVersion: core.gardener.cloud/v1beta1
+  kind: Seed
+  metadata:
+    name: aws-ap2
+  spec:
+    provider:
+      region: ap-southeast-2
+      type: aws
+    settings:
+      scheduling:
+        visible: false
+  status:
+    conditions:
+    - lastTransitionTime: "2025-09-01T12:05:57Z"
+      lastUpdateTime: "2025-09-01T12:05:54Z"
+      message: Gardenlet is posting ready status.
+      reason: GardenletReady
+      status: "True"
+      type: GardenletReady
+    - lastTransitionTime: "2025-09-01T12:06:08Z"
+      lastUpdateTime: "2025-09-01T12:05:54Z"
+      message: Backup Buckets are available.
+      reason: BackupBucketsAvailable
+      status: "True"
+      type: BackupBucketsReady
+    lastOperation:
+      description: Seed cluster has been successfully reconciled.
+      lastUpdateTime: "2025-09-01T12:05:54Z"
+      progress: 100
+      state: Succeeded
+      type: Reconcile
+    observedGeneration: 263
+- apiVersion: core.gardener.cloud/v1beta1
+  kind: Seed
+  metadata:
+    name: gcp-ha-sa1
+  spec:
+    provider:
+      region: region-central
+      type: gcp
+    settings:
+      scheduling:
+        visible: true
+    taints:
+      - key: configured-taint
+  status:
+    conditions:
+      - lastTransitionTime: "2025-09-01T12:02:36Z"
+        lastUpdateTime: "2025-09-01T12:02:34Z"
+        message: Gardenlet is posting ready status.
+        reason: GardenletReady
+        status: "True"
+        type: GardenletReady
+      - lastTransitionTime: "2025-09-01T12:02:38Z"
+        lastUpdateTime: "2025-09-01T12:02:34Z"
+        message: Backup Buckets are available.
+        reason: BackupBucketsAvailable
+        status: "True"
+        type: BackupBucketsReady
+    lastOperation:
+      description: Seed cluster has been successfully reconciled.
+      lastUpdateTime: "2025-09-01T12:02:34Z"
+      progress: 100
+      state: Succeeded
+      type: Reconcile
+kind: List

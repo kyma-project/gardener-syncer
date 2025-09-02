@@ -1,0 +1,54 @@
+{
+  "cluster" :{
+    "defaultSharedIASTenant" : {
+      "ClientID" : "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "GroupsClaim" : "groups",
+      "IssuerURL": "https://domain.com",
+      "SigningAlgs": ["RS256"],
+      "UsernameClaim": "sub",
+      "UsernamePrefix": "-"
+    }
+  },
+  "converter": {
+    "maintenanceWindow": {
+      "windowMapPath" : "path/to/tenant/config.json"
+    },
+    "kubernetes": {
+      "defaultVersion": "1.29",
+      "enableKubernetesVersionAutoUpdate": true,
+      "enableMachineImageVersionAutoUpdate": false,
+      "defaultOperatorOidc" : {
+        "ClientID" : "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        "GroupsClaim" : "groups",
+        "IssuerURL": "https://domain.com",
+        "SigningAlgs": ["RS256"],
+        "UsernameClaim": "sub",
+        "UsernamePrefix": "-"
+      }
+    },
+    "dns": {
+      "secretName": "secret-name",
+      "domainPrefix": "kyma.domain.com",
+      "providerType": "test-provider-type"
+    },
+    "aws": {
+      "enableIMDSv2": "true"
+    },
+    "machineImage": {
+      "defaultVersion": "1312.3.0",
+      "defaultName" : "gardenlinux"
+    },
+    "auditLogging": {
+      "policyConfigMapName": "audit-policy",
+      "tenantConfigPath": "path/to/tenant/config.json"
+    },
+    "gardener": {
+      "projectName": "project-name"
+    },
+    "tolerations": {
+      "region-central": [
+        { "key": "configured-taint" }
+      ]
+    }
+  }
+}
