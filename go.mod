@@ -3,7 +3,7 @@ module github.com/kyma-project/gardener-syncer
 go 1.24.4
 
 require (
-	github.com/gardener/gardener v1.129.1
+	github.com/gardener/gardener v1.130.0
 	github.com/kyma-project/infrastructure-manager v0.0.0-20250820084332-1e140c120b62
 	github.com/stretchr/testify v1.11.1
 	k8s.io/api v0.34.1
@@ -46,7 +46,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	go.yaml.in/yaml/v2 v2.4.2 // indirect
+	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/net v0.46.0 // indirect
 	golang.org/x/oauth2 v0.32.0 // indirect
