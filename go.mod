@@ -3,7 +3,7 @@ module github.com/kyma-project/gardener-syncer
 go 1.25.1
 
 require (
-	github.com/gardener/gardener v1.130.0
+	github.com/gardener/gardener v1.139.0
 	github.com/kyma-project/infrastructure-manager v0.0.0-20251028092425-b454aaaa1ece
 	github.com/stretchr/testify v1.11.1
 	k8s.io/api v0.35.1
