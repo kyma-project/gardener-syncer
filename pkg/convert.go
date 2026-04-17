@@ -9,8 +9,8 @@ import (
 
 	"sigs.k8s.io/yaml"
 
+	v1beta1helper "github.com/gardener/gardener/pkg/api/core/v1beta1/helper"
 	gardener_types "github.com/gardener/gardener/pkg/apis/core/v1beta1"
-	v1beta1helper "github.com/gardener/gardener/pkg/apis/core/v1beta1/helper"
 	"github.com/kyma-project/gardener-syncer/pkg/types"
 )
 
@@ -19,7 +19,7 @@ func VerifySeedReadiness(seed *gardener_types.Seed) bool {
 		return false
 	}
 
-	if cond := v1beta1helper.GetCondition(seed.Status.Conditions, gardener_types.SeedGardenletReady); cond == nil || cond.Status != gardener_types.ConditionTrue {
+	if cond := v1beta1helper.GetCondition(seed.Status.Conditions, gardener_types.GardenletReady); cond == nil || cond.Status != gardener_types.ConditionTrue {
 		return false
 	}
 
