@@ -68,7 +68,7 @@ var (
 		Status: gardener_types.SeedStatus{
 			Conditions: []gardener_types.Condition{
 				{
-					Type:   gardener_types.SeedGardenletReady,
+					Type:   gardener_types.GardenletReady,
 					Status: gardener_types.ConditionFalse,
 				},
 			},
@@ -87,7 +87,7 @@ var (
 		Status: gardener_types.SeedStatus{
 			Conditions: []gardener_types.Condition{
 				{
-					Type:   gardener_types.SeedGardenletReady,
+					Type:   gardener_types.GardenletReady,
 					Status: gardener_types.ConditionTrue,
 				},
 			},
@@ -106,7 +106,7 @@ var (
 		Status: gardener_types.SeedStatus{
 			Conditions: []gardener_types.Condition{
 				{
-					Type:   gardener_types.SeedGardenletReady,
+					Type:   gardener_types.GardenletReady,
 					Status: gardener_types.ConditionTrue,
 				},
 				{
@@ -137,7 +137,7 @@ var (
 		Status: gardener_types.SeedStatus{
 			Conditions: []gardener_types.Condition{
 				{
-					Type:   gardener_types.SeedGardenletReady,
+					Type:   gardener_types.GardenletReady,
 					Status: gardener_types.ConditionTrue,
 				},
 			},
@@ -165,7 +165,7 @@ var (
 		Status: gardener_types.SeedStatus{
 			Conditions: []gardener_types.Condition{
 				{
-					Type:   gardener_types.SeedGardenletReady,
+					Type:   gardener_types.GardenletReady,
 					Status: gardener_types.ConditionTrue,
 				},
 			},
@@ -188,7 +188,7 @@ var (
 		Status: gardener_types.SeedStatus{
 			Conditions: []gardener_types.Condition{
 				{
-					Type:   gardener_types.SeedGardenletReady,
+					Type:   gardener_types.GardenletReady,
 					Status: gardener_types.ConditionTrue,
 				},
 			},
@@ -211,7 +211,7 @@ var (
 		Status: gardener_types.SeedStatus{
 			Conditions: []gardener_types.Condition{
 				{
-					Type:   gardener_types.SeedGardenletReady,
+					Type:   gardener_types.GardenletReady,
 					Status: gardener_types.ConditionTrue,
 				},
 				{
@@ -351,7 +351,7 @@ func taintedSeed(region string, taints ...gardener_types.SeedTaint) gardener_typ
 		Status: gardener_types.SeedStatus{
 			Conditions: []gardener_types.Condition{
 				{
-					Type:   gardener_types.SeedGardenletReady,
+					Type:   gardener_types.GardenletReady,
 					Status: gardener_types.ConditionTrue,
 				},
 			},
