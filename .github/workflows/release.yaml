@@ -9,6 +9,8 @@ jobs:
   run-release-tests:
     permissions:
       contents: read
+      actions: read
+      pull-requests: write
     uses: ./.github/workflows/run-tests.yaml
 
   generate-release:
