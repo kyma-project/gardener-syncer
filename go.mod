@@ -44,7 +44,7 @@ require (
 	github.com/json-iterator/go v1.1.13-0.20220915233716-71ac16282d12 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/kyma-project/lifecycle-manager/api v0.0.0-20250415061517-3922bac13370 // indirect
-	github.com/kyma-project/registry-cache v0.0.0-20251023124504-71bc19cf102a // indirect
+	github.com/kyma-project/registry-cache v0.0.0-20260506092754-0820ee7b663a // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
