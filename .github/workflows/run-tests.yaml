@@ -15,7 +15,7 @@ on:
       - .gitignore
       - "**.md"
 
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - .reuse
@@ -33,9 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
-        ref: ${{ github.event.pull_request.head.ref }}
+        ref: ${{ github.event.pull_request.head.sha }}
         repository: ${{ github.event.pull_request.head.repo.full_name }}
     - name: Set up cache
       uses: actions/cache@v4
@@ -62,7 +62,7 @@ jobs:
 
   code_coverage:
     name: "Code coverage report"
-    if: github.event_name == 'pull_request_target'
+    if: github.event_name == 'pull_request_target' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     needs: unit-tests
     permissions:
