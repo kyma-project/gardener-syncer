@@ -1,0 +1,4 @@
+name: kyma-project.io/kyma-runtime/kcp-components/gardener-syncer
+team: kyma/framefrog
+images:
+  - europe-docker.pkg.dev/kyma-project/prod/gardener-syncer:latest
