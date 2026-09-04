@@ -1,6 +1,6 @@
 module github.com/kyma-project/gardener-syncer
 
-go 1.27
+go 1.27.1
 
 require (
 	github.com/gardener/gardener v1.139.1
