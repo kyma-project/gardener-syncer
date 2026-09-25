@@ -3,6 +3,7 @@ FROM --platform=$BUILDPLATFORM golang:1.27.1-alpine3.24 AS builder
 ARG TARGETOS
 ARG TARGETARCH
 
+
 WORKDIR /project_workspace
 # Copy the Go Modules manifests
 COPY go.mod go.mod
