@@ -3,8 +3,8 @@ module github.com/kyma-project/gardener-syncer
 go 1.27.2
 
 require (
-	github.com/gardener/gardener v1.139.1
-	github.com/gardener/gardener/pkg/apis v1.139.0
+	github.com/gardener/gardener v1.146.3
+	github.com/gardener/gardener/pkg/apis v1.144.2
 	github.com/kyma-project/infrastructure-manager v0.0.0-20260417072436-c4dc2667e85a
 	github.com/stretchr/testify v1.11.1
 	k8s.io/api v0.37.1
@@ -22,8 +22,8 @@ require (
 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.2 // indirect
 	github.com/gardener/oidc-webhook-authenticator v0.42.0 // indirect
-	github.com/go-logr/logr v1.4.3 // indirect
-	github.com/go-openapi/jsonpointer v1.0.1 // indirect
+	github.com/go-logr/logr v1.4.4 // indirect
+	github.com/go-openapi/jsonpointer v1.0.2 // indirect
 	github.com/go-openapi/jsonreference v1.0.0 // indirect
 	github.com/go-openapi/swag v0.29.2 // indirect
 	github.com/go-openapi/swag/cmdutils v0.29.2 // indirect
@@ -43,7 +43,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/json-iterator/go v1.1.13-0.20220915233716-71ac16282d12 // indirect
 	github.com/kyma-project/lifecycle-manager/api v0.0.0-20250415061517-3922bac13370 // indirect
-	github.com/kyma-project/registry-cache v0.0.0-20251023124504-71bc19cf102a // indirect
+	github.com/kyma-project/registry-cache v0.0.0-20261015104232-23c58861dfb1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
@@ -66,8 +66,8 @@ require (
 	k8s.io/component-base v0.37.1 // indirect
 	k8s.io/klog/v2 v2.140.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
-	k8s.io/utils v0.0.0-20260626114624-be93311217bd // indirect
-	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
+	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3 // indirect
+	sigs.k8s.io/json v0.0.0-20260909141634-11ed52e25bc5 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2 // indirect
 )
