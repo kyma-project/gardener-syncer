@@ -216,8 +216,8 @@ github.com/kyma-project/infrastructure-manager v0.0.0-20261020064905-a3918fc83bd
 github.com/kyma-project/infrastructure-manager v0.0.0-20261020064905-a3918fc83bd1/go.mod h1:1WKf7aYdm7t8aoUtnneQiGT0MAQkoEjKBlLdbP4cDao=
 github.com/kyma-project/lifecycle-manager/api v1.0.0 h1:gUXHjaNMWSt2tskUHG3tijXmh4SdCs0X+SiEDC9hXGA=
 github.com/kyma-project/lifecycle-manager/api v1.0.0/go.mod h1:wbr1nMJFdpQo25JLle8oEub1SBpgClulxOPAPqjcm4c=
-github.com/kyma-project/registry-cache v0.0.0-20260702083050-7fec976a2def h1:xzoNMpbioRLsN2A1K5utz7tizyEEFKs+mBl4expX7Qk=
-github.com/kyma-project/registry-cache v0.0.0-20260702083050-7fec976a2def/go.mod h1:EmX6iX+hulXNdk85fe4oytm5zYiG69KPSrmscL/DHU4=
+github.com/kyma-project/registry-cache v0.0.0-20261015104232-23c58861dfb1 h1:50hWRZ4JnFnNyfGfY6OerjwZtmHXssI33jMdiPxUKX0=
+github.com/kyma-project/registry-cache v0.0.0-20261015104232-23c58861dfb1/go.mod h1:PGNnwMKNWc8zHihxcvA37TW3jD/r94T3ZmliuC42iPY=
 github.com/labstack/echo/v4 v4.15.4 h1:DL45vVYa+BWE+XuW+zZNd9H0YEdZ80UAWJGcTVW4EVs=
 github.com/labstack/echo/v4 v4.15.4/go.mod h1:CuMetKIRwsuO/qlAgMq+KTAalwGoB/h4tC+yPdrTj1g=
 github.com/labstack/gommon v0.5.0 h1:6VSQ2NOzsnEJ5W6+84E0RbcaDDmgB6NIAzWCczTEe6c=
@@ -455,8 +455,8 @@ sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSz
 sigs.k8s.io/controller-runtime v0.25.2/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
 sigs.k8s.io/gateway-api v1.6.1 h1:mock6phZbI6rvZerwrVNk7hVNymQgHo+6sJ81Ia7ftY=
 sigs.k8s.io/gateway-api v1.6.1/go.mod h1:FVfx3t389ybeXOqvDghLbdvJdSCfI/PReqCUI3lu3mY=
-sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
-sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730/go.mod h1:mdzfpAEoE6DHQEN0uh9ZbOCuHbLK5wOm7dK4ctXE9Tg=
+sigs.k8s.io/json v0.0.0-20260909141634-11ed52e25bc5 h1:k9jo7ED/fsfOcz3L1P20P5tjTNtsdQNwMOG2aKzHrl8=
+sigs.k8s.io/json v0.0.0-20260909141634-11ed52e25bc5/go.mod h1:mdzfpAEoE6DHQEN0uh9ZbOCuHbLK5wOm7dK4ctXE9Tg=
 sigs.k8s.io/randfill v1.0.0 h1:JfjMILfT8A6RbawdsK2JXGBR5AQVfd+9TbzrlneTyrU=
 sigs.k8s.io/randfill v1.0.0/go.mod h1:XeLlZ/jmk4i1HRopwe7/aU3H5n1zNUcX6TM94b3QxOY=
 sigs.k8s.io/structured-merge-diff/v6 v6.4.2 h1:qdOxHwrl2Kaag1aQEarlYcOA9vSyGCp3CIki3aW8c4Q=
